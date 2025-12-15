@@ -91,7 +91,8 @@ fn obtenir_nom_service(port: u16) -> &'static str {
     }
 }
 
-// Parse une liste de ports séparés par des virgules
+// la je parse la liste de ports que l'utilisateur peut donner genre "22,80,443"
+// je split par virgule et je garde que les trucs valides
 fn parse_ports_list(ports: &str) -> Vec<u16> {
     ports
         .split(',')
@@ -99,10 +100,13 @@ fn parse_ports_list(ports: &str) -> Vec<u16> {
         .collect()
 }
 
-// Fonction qui teste si un port est ouvert sur une adresse IP
-// Retourne true si le port est ouvert, false sinon
+// bon la c'est la fonction principale pour tester un port
+// en gros on essaye de se connecter et si ca marche le port est ouvert
+// j'ai rajouté les parametres pour afficher ou pas selon les options
 fn est_port_ouvert(ip: &str, port: u16, timeout: u64, show_open: bool, show_closed: bool) -> bool {
+    // on construit l'adresse complete genre "192.168.1.1:80"
     let adresse = format!("{}:{}", ip, port);
+    // on tente la connexion avec le timeout qu'on a choisi
     match TcpStream::connect_timeout(&adresse.parse().unwrap(), Duration::from_millis(timeout)) {
         Ok(_) => {
             if show_open {
@@ -119,7 +123,8 @@ fn est_port_ouvert(ip: &str, port: u16, timeout: u64, show_open: bool, show_clos
     }
 }
 
-// Export des résultats en JSON
+// ici c'est pour exporter les resultats en json si l'user veut
+// j'utilise serde pour serialiser la structure et j'ecris dans un fichier
 fn exporter_json(path: &str, data: &ExportResult) {
     match serde_json::to_vec_pretty(data) {
         Ok(buf) => {
@@ -134,13 +139,14 @@ fn exporter_json(path: &str, data: &ExportResult) {
 }
 
 fn main() {
-    // On parse les arguments de ligne de commande
+    // on recupere les arguments que l'user a passé
     let args = Args::parse();
 
     println!("=== Port Scanner v1.1 (CLI étendue) ===");
     println!();
 
-    // Choix de la liste de ports
+    // la on regarde si l'user a donné une liste custom de ports ou pas
+    // si oui on utilise sa liste sinon on prend la plage debut-fin
     let mut ports: Vec<u16> = if let Some(liste) = &args.ports {
         let parsed = parse_ports_list(liste);
         if parsed.is_empty() {
@@ -162,14 +168,17 @@ fn main() {
     println!("Utilisation de threads pour accélérer le scan...");
     println!();
 
-    // Liste partagée des ports ouverts
+    // la c'est la liste ou on stocke les ports ouverts qu'on trouve
+    // le Arc et Mutex c'est pour que tous les threads puissent ecrire dedans sans probleme
     let ports_ouverts = Arc::new(Mutex::new(Vec::<(u16, String)>::new()));
 
-    // Threads
+    // on stocke les handles de threads pour attendre qu'ils finissent
     let mut handles = vec![];
+    // ces variables c'est pour savoir si on affiche les ports ouverts/fermés
     let show_open = !args.quiet;
     let show_closed = args.verbose;
 
+    // bon la on lance un thread par port, c'est bourrin mais ca va vite
     for port in ports.drain(..) {
         let ip_clone = args.ip.clone();
         let ports_clone = Arc::clone(&ports_ouverts);
@@ -208,6 +217,7 @@ fn main() {
         println!("Aucun port ouvert trouvé.");
     }
 
+    // si l'user a demandé un export json on le fait ici
     if let Some(path) = &args.json {
         let export = ExportResult {
             ip: args.ip.clone(),
