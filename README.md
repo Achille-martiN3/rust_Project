@@ -1,21 +1,21 @@
-# Port Scanner 🔍
+# Port Scanner
 
 Un scanner de ports réseau rapide et multi-thread développé en Rust.
 
-## 📋 Description
+## Description
 
 Ce port scanner permet de détecter rapidement les ports ouverts sur une machine cible. Il utilise le multi-threading pour scanner plusieurs ports simultanément, ce qui accélère considérablement le processus. Le programme identifie également les services courants associés à chaque port ouvert (HTTP, SSH, FTP, etc.).
 
-## ⚙️ Fonctionnalités
+## Fonctionnalités
 
-- ✅ Scan rapide multi-thread
-- ✅ Détection des services courants (HTTP, SSH, FTP, RDP, MySQL, etc.)
-- ✅ Interface en ligne de commande complète avec options personnalisables
-- ✅ Timeout configurable pour chaque connexion
-- ✅ Mode verbose pour afficher tous les ports testés
-- ✅ Plage de ports personnalisable
+- Scan rapide multi-thread
+- Détection des services courants (HTTP, SSH, FTP, RDP, MySQL, etc.)
+- Interface en ligne de commande complète avec options personnalisables
+- Timeout configurable pour chaque connexion
+- Mode verbose pour afficher tous les ports testés
+- Plage de ports personnalisable
 
-## 🛠️ Compilation
+## Compilation
 
 Assurez-vous d'avoir [Rust](https://www.rust-lang.org/tools/install) installé sur votre système.
 
@@ -30,7 +30,7 @@ cargo build --release
 # L'exécutable sera disponible dans target/release/
 ```
 
-## 🚀 Utilisation
+## Utilisation
 
 ### Exemples d'utilisation
 
@@ -68,7 +68,7 @@ cargo run -- --ip 192.168.1.1 --port-debut 20 --port-fin 3389 --timeout 300
 | `--verbose` | `-v` | Afficher tous les ports testés | false |
 | `--help` | `-h` | Afficher l'aide | - |
 
-## 📊 Services détectés
+## Services détectés
 
 Le scanner identifie automatiquement les services suivants :
 
@@ -91,18 +91,18 @@ Le scanner identifie automatiquement les services suivants :
 - **VNC** (5900) - Contrôle à distance
 - Et bien d'autres...
 
-## ⚠️ Avertissement
+## Avertissement
 
 **IMPORTANT :** Cet outil est développé à des fins éducatives et de test de sécurité uniquement.
 
-- ❌ **NE PAS** utiliser sur des systèmes sans autorisation explicite
-- ❌ **NE PAS** utiliser pour des activités malveillantes
-- ✅ Utilisez uniquement sur vos propres machines ou avec permission écrite
-- ✅ Respectez les lois en vigueur dans votre pays
+- **NE PAS** utiliser sur des systèmes sans autorisation explicite
+- **NE PAS** utiliser pour des activités malveillantes
+- Utilisez uniquement sur vos propres machines ou avec permission écrite
+- Respectez les lois en vigueur dans votre pays
 
 L'utilisation non autorisée de scanners de ports peut être illégale et entraîner des poursuites judiciaires. L'auteur n'est pas responsable de l'utilisation abusive de cet outil.
 
-## 🧠 Architecture technique
+## Architecture technique
 
 Le projet utilise :
 - **Rust** pour la performance et la sécurité mémoire
@@ -111,19 +111,19 @@ Le projet utilise :
 - **TcpStream** pour les connexions TCP
 - **clap** pour l'interface en ligne de commande
 
-## 📝 Développement par étapes
+## Développement par étapes
 
 Le projet a été développé en 5 parties :
-1. ✅ Fonction de base pour scanner un port
-2. ✅ Scan de plage de ports (1-1000)
-3. ✅ Multi-threading pour améliorer les performances
-4. ✅ Détection des services courants
-5. ✅ Interface CLI complète avec options
+1. Fonction de base pour scanner un port
+2. Scan de plage de ports (1-1000)
+3. Multi-threading pour améliorer les performances
+4. Détection des services courants
+5. Interface CLI complète avec options
 
-## 📄 Licence
+## Licence
 
 Projet éducatif - À utiliser de manière responsable uniquement.
 
-## 👨‍💻 Auteur
+## Auteur
 
 Développé dans le cadre d'un projet académique en cybersécurité.
