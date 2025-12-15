@@ -4,29 +4,23 @@ Un scanner de ports réseau rapide et multi-thread développé en Rust.
 
 ## Description
 
-Ce port scanner permet de détecter rapidement les ports ouverts sur une machine cible. Il utilise le multi-threading pour scanner plusieurs ports simultanément, ce qui accélère considérablement le processus. Le programme identifie également les services courants associés à chaque port ouvert (HTTP, SSH, FTP, etc.).
+Ce port scanner détecte rapidement les ports ouverts sur une cible. Il exploite le multi-threading pour accélérer le scan et identifie les services courants associés à chaque port ouvert (HTTP, SSH, FTP, etc.).
 
 ## Fonctionnalités
 
 - Scan rapide multi-thread
 - Détection des services courants (HTTP, SSH, FTP, RDP, MySQL, etc.)
-- Interface en ligne de commande complète avec options personnalisables
+- Interface CLI complète (plage ou liste de ports personnalisée)
 - Timeout configurable pour chaque connexion
-- Mode verbose pour afficher tous les ports testés
-- Plage de ports personnalisable
+- Mode verbose (affiche les ports fermés) et mode quiet (sortie minimale)
+- Export optionnel des résultats en JSON
 
 ## Compilation
 
-Assurez-vous d'avoir [Rust](https://www.rust-lang.org/tools/install) installé sur votre système.
+Assurez-vous d'avoir [Rust](https://www.rust-lang.org/tools/install) installé.
 
 ```bash
-# Cloner le projet
-git clone <votre-repo>
-cd rust_Project
-
-# Compiler le projet
 cargo build --release
-
 # L'exécutable sera disponible dans target/release/
 ```
 
@@ -38,23 +32,29 @@ cargo build --release
 # Scan par défaut (localhost, ports 1-1000)
 cargo run
 
-# Afficher l'aide
-cargo run -- --help
-
 # Scanner une IP spécifique
 cargo run -- --ip 192.168.1.1
 
 # Scanner une plage de ports spécifique
-cargo run -- --port-debut 1 --port-fin 100
+cargo run -- --port-debut 20 --port-fin 3389
 
-# Scanner avec un timeout personnalisé (en ms)
+# Timeout personnalisé (en ms)
 cargo run -- --timeout 500
 
-# Mode verbose (affiche tous les ports testés)
+# Mode verbose (affiche aussi les ports fermés)
 cargo run -- --verbose
 
-# Exemple complet
-cargo run -- --ip 192.168.1.1 --port-debut 20 --port-fin 3389 --timeout 300
+# Mode silencieux (résumé + ports ouverts)
+cargo run -- --quiet
+
+# Liste personnalisée de ports (valeurs et plages séparées par des virgules)
+cargo run -- --ports "22,80,443,8080-8090"
+
+# Export des résultats au format JSON
+cargo run -- --ip scanme.nmap.org --ports "22,80,443" --json resultat.json
+
+# Afficher l'aide
+cargo run -- --help
 ```
 
 ### Options disponibles
@@ -66,6 +66,9 @@ cargo run -- --ip 192.168.1.1 --port-debut 20 --port-fin 3389 --timeout 300
 | `--port-fin` | `-e` | Port de fin de la plage | 1000 |
 | `--timeout` | `-t` | Timeout en millisecondes | 200 |
 | `--verbose` | `-v` | Afficher tous les ports testés | false |
+| `--quiet` | - | Masquer les logs intermédiaires | false |
+| `--ports` | - | Liste de ports/plages (ex: 22,80,8080-8090) | - |
+| `--json` | - | Chemin du fichier de sortie JSON | - |
 | `--help` | `-h` | Afficher l'aide | - |
 
 ## Services détectés
