@@ -1,7 +1,7 @@
 ﻿// On importe les modules nécessaires pour la connexion réseau
 use std::fs::File;
 use std::io::Write;
-use std::net::TcpStream;
+use std::net::{TcpStream, ToSocketAddrs};
 use std::time::Duration;
 // On importe les modules pour le multi-threading
 use std::sync::{Arc, Mutex};
@@ -104,10 +104,18 @@ fn parse_ports_list(ports: &str) -> Vec<u16> {
 // en gros on essaye de se connecter et si ca marche le port est ouvert
 // j'ai rajouté les parametres pour afficher ou pas selon les options
 fn est_port_ouvert(ip: &str, port: u16, timeout: u64, show_open: bool, show_closed: bool) -> bool {
-    // on construit l'adresse complete genre "192.168.1.1:80"
+    // on construit l'adresse complete genre "192.168.1.1:80" ou "scanme.nmap.org:80"
     let adresse = format!("{}:{}", ip, port);
+    // on resout le DNS si c'est un hostname (genre scanme.nmap.org)
+    let socket_addr = match adresse.to_socket_addrs() {
+        Ok(mut addrs) => match addrs.next() {
+            Some(addr) => addr,
+            None => return false,
+        },
+        Err(_) => return false,
+    };
     // on tente la connexion avec le timeout qu'on a choisi
-    match TcpStream::connect_timeout(&adresse.parse().unwrap(), Duration::from_millis(timeout)) {
+    match TcpStream::connect_timeout(&socket_addr, Duration::from_millis(timeout)) {
         Ok(_) => {
             if show_open {
                 println!(" Port {} est OUVERT - {}", port, obtenir_nom_service(port));
@@ -178,7 +186,7 @@ fn main() {
     let show_open = !args.quiet;
     let show_closed = args.verbose;
 
-    // bon la on lance un thread par port, c'est bourrin mais ca va vite
+    // bon la on lance un thread par port, pour aller plus vite
     for port in ports.drain(..) {
         let ip_clone = args.ip.clone();
         let ports_clone = Arc::clone(&ports_ouverts);
